@@ -20,7 +20,15 @@ public class CourseController {
   private final CourseService service;
   private final CourseMapper courseMapper;
   private final UpdateStudentCourseValidator validator;
-
+  @PutMapping("courses")
+  public List<Course> createOrUpdateCourse (
+    @RequestBody List<Course> toCrupdate
+  ){
+    List<school.hei.haapi.model.Course> toSave = toCrupdate.stream().map(courseMapper::toDomainCourse)
+            .collect(Collectors.toUnmodifiableList());
+    return service.createOrUpdateCourse(toSave).stream().map(courseMapper::toRest)
+            .collect(Collectors.toUnmodifiableList());
+  }
   @PutMapping("students/{student_id}/courses")
   public List<Course> updateStudentCourse(
       @PathVariable(name = "student_id") String studentId,
